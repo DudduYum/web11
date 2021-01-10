@@ -40,7 +40,6 @@ def post(item: Item):
         temp_id += 1
     item.id = str(temp_id)
     sneakerList.append(item)
-    print(sneakerList)
 
 
 @app.get('/sneaker')
@@ -49,16 +48,8 @@ def getFiltered(name: str = 'None', min: int=0, max: int=1000):
     return [i for i in sneakerList
     if name in (i.name, 'None') and min < i.price_in_uah and max > i.price_in_uah
     ]
-    #return sneakerList
 
 
-#@app.get('/sneaker')
-#def getFiltered(name,price_in_uah):
-#    print("hi")
-#    return []
-#    #return [i for i in sneakerList
-#    #if name in (i.name, 'None') and price_in_uah in (i.price_in_uah, 'None')
-#    #]
 
     
 @app.get('/item/{id}')
