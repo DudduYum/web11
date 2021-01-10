@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional,List
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -14,6 +14,9 @@ class Item(BaseModel):
     name: str
     price_in_uah: int
 
+class Items(BaseModel):
+    items: List[Item]
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -22,6 +25,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post('/sneakers')
+def insertTestSnikers(items: Items):
+    for i in items.items:
+        sneakerList.append(i)
+    #sneakerList = [i for i in items.items]
 
 
 @app.post('/sneaker')
@@ -35,10 +44,23 @@ def post(item: Item):
 
 
 @app.get('/sneaker')
-def get():
-    return sneakerList
+def getFiltered(name: str = 'None', min: int=0, max: int=1000):
+    print (sneakerList)
+    return [i for i in sneakerList
+    if name in (i.name, 'None') and min < i.price_in_uah and max > i.price_in_uah
+    ]
+    #return sneakerList
 
 
+#@app.get('/sneaker')
+#def getFiltered(name,price_in_uah):
+#    print("hi")
+#    return []
+#    #return [i for i in sneakerList
+#    #if name in (i.name, 'None') and price_in_uah in (i.price_in_uah, 'None')
+#    #]
+
+    
 @app.get('/item/{id}')
 def get_by_id(id):
     for sneak in sneakerList:
@@ -59,8 +81,4 @@ def delete(id):
         if sneakerList[i].id == id:
             return sneakerList.pop(i)
 
-@app.get('/sneaker?min=/{name}&{price_in_uah}')
-def getFiltered(name,price_in_uah):
-    return [i for i in sneakerList
-    if name in (i.name, 'None') and price_in_uah in (i.price_in_uah, 'None')
-    ]
+
